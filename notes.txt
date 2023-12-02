@@ -1,0 +1,70 @@
+
+
+new  		POST 
+modify 		PUT
+destroy		DELETE 
+read		GET 
+
+input-output - request-response -> JSON 
+
+-------------------------------------------
+
+{ } 
+{key:value} 
+
+
+---------------------
+saveUser(UserBean userBean) -> 
+	byDefault-> spring -> formdata-> 
+	change -> json -> @RequestBody -> now json is accepted 
+
+
+------------------------------
+
+db connection
+
+	1) spring jdbc 
+	2) mysql connector 
+	3) configurate -> application.properties 
+
+-------------------------------------
+
+CRUD 
+
+-------------------------------------
+1) password -> encrypted 
+2) send mail when signup 
+
+password encryption = BCRYPT 
+        
+abc -> h435hkjhsf8sdf 
+Bcrypt 
+
+pom.xml -> spring crypto 
+
+
+BcryptPasswordEncoder 
+				encode() 
+
+royal encode() h45j4k3kjh444j3l43j4kl4h343k4
+royal encode() 45j6kl45kl6jshdfjh345kj45j5j5
+royal encode() 5k65jksd8fsdf4jl5jkjkdfkjfjkf
+
+----------------------------------------
+when user successfully signup , we want to send welcome mail 
+
+
+pom.xml -> spring starter -> java mail 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
