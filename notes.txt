@@ -58,6 +58,18 @@ pom.xml -> spring starter -> java mail
 
 
 how we convert BcryptPasswordEnconder Singleton? 
+--------------------------------------------
+
+Response -> 
+	HTTP Status code -> 200OK ,  
+	UserDefine code -> 
+
+
+
+
+
+
+
 
  
 

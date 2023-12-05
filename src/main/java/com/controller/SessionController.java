@@ -3,6 +3,9 @@ package com.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +42,7 @@ public class SessionController {
 	MailerService mailerService;
 
 	@PostMapping("/users")
-	public UserBean saveUser(@RequestBody UserBean userBean) {
+	public ResponseEntity<?> saveUser(@RequestBody UserBean userBean) {
 		System.out.println(userBean.getFirstName());
 		System.out.println(userBean.getEmail());
 		System.out.println(userBean.getPassword());
@@ -50,9 +53,18 @@ public class SessionController {
 		userBean.setPassword(ePwd);
 
 		userDao.addUser(userBean);
-		mailerService.sendWelcomeMail(userBean.getEmail(), userBean.getFirstName());
 
-		return userBean;
+		Runnable r = () -> {
+			mailerService.sendWelcomeMail(userBean.getEmail(), userBean.getFirstName());
+		};
+		Thread t  = new Thread(r);
+		t.start();
+		
+
+//		return ResponseEntity.ok(userBean);//201
+//		return ResponseEntity.status(201).body(userBean);
+		return ResponseEntity.status(HttpStatus.CREATED).body(userBean);
+
 	}
 
 	@GetMapping("/users")
@@ -90,20 +102,20 @@ public class SessionController {
 		return user;
 	}
 
-	
-	//db encoded 
-	//user plainText 
-	
+	// db encoded
+	// user plainText
+
 	@PostMapping("/login")
-	public UserBean login( @RequestBody LoginDto  loginDto) {
-		
-		UserBean user =  userDao.getUserByEmail(loginDto.getEmail()); 
-		if(user != null && encoder.matches(loginDto.getPassword(), user.getPassword()) == true) {
+	public UserBean login(@RequestBody LoginDto loginDto) {
+
+		UserBean user = userDao.getUserByEmail(loginDto.getEmail());
+		if (user != null && encoder.matches(loginDto.getPassword(), user.getPassword()) == true) {
 			return user;
+			// 200
 		}
-		  
-		return  null; 
+
+		return null;
+		// 401
 	}
-	
-	
+
 }
