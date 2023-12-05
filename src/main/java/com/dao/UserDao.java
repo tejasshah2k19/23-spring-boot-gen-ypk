@@ -43,5 +43,15 @@ public class UserDao {
 				user.getEmail(), user.getUserId());
 
 	}
+	
+	public UserBean getUserByEmail(String email) {
+		try {
+			return stmt.queryForObject("select * from users where email = ?",
+					new BeanPropertyRowMapper<>(UserBean.class), new Object[] { email });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }

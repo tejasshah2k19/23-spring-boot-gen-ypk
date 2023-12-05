@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bean.UserBean;
 import com.dao.UserDao;
+import com.dto.LoginDto;
 import com.service.MailerService;
 
 @RestController
@@ -89,4 +90,20 @@ public class SessionController {
 		return user;
 	}
 
+	
+	//db encoded 
+	//user plainText 
+	
+	@PostMapping("/login")
+	public UserBean login( @RequestBody LoginDto  loginDto) {
+		
+		UserBean user =  userDao.getUserByEmail(loginDto.getEmail()); 
+		if(user != null && encoder.matches(loginDto.getPassword(), user.getPassword()) == true) {
+			return user;
+		}
+		  
+		return  null; 
+	}
+	
+	
 }

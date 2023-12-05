@@ -57,9 +57,9 @@ when user successfully signup , we want to send welcome mail
 pom.xml -> spring starter -> java mail 
 
 
+how we convert BcryptPasswordEnconder Singleton? 
 
-
-
+ 
 
 
 
