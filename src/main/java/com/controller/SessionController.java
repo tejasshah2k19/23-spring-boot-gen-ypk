@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bean.ResponseBean;
 import com.bean.UserBean;
 import com.dao.UserDao;
 import com.dto.LoginDto;
@@ -42,7 +42,7 @@ public class SessionController {
 	MailerService mailerService;
 
 	@PostMapping("/users")
-	public ResponseEntity<?> saveUser(@RequestBody UserBean userBean) {
+	public ResponseBean<?> saveUser(@RequestBody UserBean userBean) {
 		System.out.println(userBean.getFirstName());
 		System.out.println(userBean.getEmail());
 		System.out.println(userBean.getPassword());
@@ -63,28 +63,34 @@ public class SessionController {
 
 //		return ResponseEntity.ok(userBean);//201
 //		return ResponseEntity.status(201).body(userBean);
-		return ResponseEntity.status(HttpStatus.CREATED).body(userBean);
-
+		ResponseBean<UserBean> res = new ResponseBean<>();
+		res.setData(userBean);
+		res.setStatus(200);
+		res.setMsg("User Added ");
+//		return ResponseEntity.status(HttpStatus.CREATED).body(userBean);
+		return res; 
 	}
 
 	@GetMapping("/users")
-	public List<UserBean> getAllUsers() {
+	public ResponseEntity<?> getAllUsers() {
 		//
-		return userDao.getAllUsers();
+		List<UserBean> users =  userDao.getAllUsers();
+		return ResponseEntity.status(HttpStatus.CREATED).body(users);
 	}
 
 	@DeleteMapping("/users/{userId}")
-	public UserBean deleteUser(@PathVariable("userId") Integer userId) {
+	public ResponseEntity<?> deleteUser(@PathVariable("userId") Integer userId) {
 		UserBean user = userDao.getUserById(userId);
 		if (user == null) {
-			return null;
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
 		} else {
 
-			return user;
+			return ResponseEntity.status(HttpStatus.OK).body(user);
 		}
-
 	}
-
+	//status 
+	//data 
+	
 	@GetMapping("/users/{userId}")
 	public UserBean getUserById(@PathVariable("userId") Integer userId) {
 		UserBean user = userDao.getUserById(userId);
