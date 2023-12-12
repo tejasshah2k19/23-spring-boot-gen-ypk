@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bean.ResponseBean;
@@ -72,10 +73,17 @@ public class SessionController {
 	}
 
 	@GetMapping("/users")
-	public ResponseEntity<?> getAllUsers() {
+	public ResponseEntity<?> getAllUsers(@RequestHeader("token") String token) {
 		//
+		//user is loggedin? 
+		System.out.println("token => "+token);
+		if(token != null || token.trim().length() != 0 ) {
+			if(userDao.getUserByToken(token) == false) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+			}
+		}
 		List<UserBean> users =  userDao.getAllUsers();
-		return ResponseEntity.status(HttpStatus.CREATED).body(users);
+		return ResponseEntity.status(HttpStatus.OK).body(users);
 	}
 
 	@DeleteMapping("/users/{userId}")
@@ -112,15 +120,23 @@ public class SessionController {
 	// user plainText
 
 	@PostMapping("/login")
-	public UserBean login(@RequestBody LoginDto loginDto) {
+	public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
 
 		UserBean user = userDao.getUserByEmail(loginDto.getEmail());
 		if (user != null && encoder.matches(loginDto.getPassword(), user.getPassword()) == true) {
-			return user;
+		
+			//token generate
+		String token = 	"" + (int)(Math.random()*100000); //    * 100000
+			//user -> set 
+			user.setToken(token);
+			//user -> db - set 
+			userDao.updateToken(user.getUserId(),token);
+			
+			return ResponseEntity.ok(user);
 			// 200
 		}
 
-		return null;
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginDto);
 		// 401
 	}
 

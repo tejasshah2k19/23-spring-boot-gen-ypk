@@ -54,4 +54,19 @@ public class UserDao {
 		return null;
 	}
 
+	public void updateToken(Integer userId, String token) {
+		stmt.update("update users set token = ? where userId = ? ",token,userId);
+	}
+
+	public boolean getUserByToken(String token) {
+		try {
+			  stmt.queryForObject("select * from users where token = ?",
+					new BeanPropertyRowMapper<>(UserBean.class), new Object[] { token });
+			  return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }

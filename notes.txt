@@ -65,7 +65,28 @@ Response ->
 	UserDefine code -> 
 
 ---------------------------------
-swagger doc -> 
+swagger doc -> REST api -> doc 
+
+------------------------------
+
+private url - protected url -- login 
+
+public url - 
+
+-----------------------------
+/users 		post  --- saveuser --signup  -- public  
+/users 		get   --- get all users --- private   ---- authorize 
+/users/1 	get   --- get user by id --- private 
+/users/1 	delete ---- delete user id --- private --- authorize  
+/users		put    ----- update user ---- private 
+
+no authentication --> public  
+authentication --> private  
+authorization  ---> private + access 
+
+----------------------------------
+
+
 
 
 
