@@ -77,11 +77,16 @@ public class SessionController {
 		//
 		//user is loggedin? 
 		System.out.println("token => "+token);
+		
+		
 		if(token != null || token.trim().length() != 0 ) {
-			if(userDao.getUserByToken(token) == false) {
+			//token->time , todayTime 
+			if(userDao.getUserByToken(token) == null) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
 			}
 		}
+		
+		
 		List<UserBean> users =  userDao.getAllUsers();
 		return ResponseEntity.status(HttpStatus.OK).body(users);
 	}
@@ -125,12 +130,13 @@ public class SessionController {
 		UserBean user = userDao.getUserByEmail(loginDto.getEmail());
 		if (user != null && encoder.matches(loginDto.getPassword(), user.getPassword()) == true) {
 		
-			//token generate
+			//token generate - 56437
 		String token = 	"" + (int)(Math.random()*100000); //    * 100000
-			//user -> set 
+		
+		//user -> set 
 			user.setToken(token);
 			//user -> db - set 
-			userDao.updateToken(user.getUserId(),token);
+			userDao.updateToken(user.getUserId(),token);//
 			
 			return ResponseEntity.ok(user);
 			// 200
@@ -138,6 +144,16 @@ public class SessionController {
 
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginDto);
 		// 401
+	}
+	
+	@GetMapping("/logout")
+	public ResponseEntity<?> logout(@RequestHeader("token") String token){
+		
+		UserBean user = userDao.getUserByToken(token);
+		
+		userDao.updateToken(user.getUserId(), "");
+		
+		return ResponseEntity.ok(null);
 	}
 
 }
