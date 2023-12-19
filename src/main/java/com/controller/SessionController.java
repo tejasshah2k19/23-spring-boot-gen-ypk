@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bean.ResponseBean;
@@ -22,6 +23,7 @@ import com.dto.LoginDto;
 import com.service.MailerService;
 
 @RestController
+@RequestMapping("/public")
 public class SessionController {
 
 	// we dont have views --- input jsp
@@ -42,7 +44,7 @@ public class SessionController {
 	@Autowired
 	MailerService mailerService;
 
-	@PostMapping("/users")
+	@PostMapping("/signup") //signup 
 	public ResponseBean<?> saveUser(@RequestBody UserBean userBean) {
 		System.out.println(userBean.getFirstName());
 		System.out.println(userBean.getEmail());
@@ -72,54 +74,10 @@ public class SessionController {
 		return res; 
 	}
 
-	@GetMapping("/users")
-	public ResponseEntity<?> getAllUsers(@RequestHeader("token") String token) {
-		//
-		//user is loggedin? 
-		System.out.println("token => "+token);
-		
-		
-		if(token != null || token.trim().length() != 0 ) {
-			//token->time , todayTime 
-			if(userDao.getUserByToken(token) == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-			}
-		}
-		
-		
-		List<UserBean> users =  userDao.getAllUsers();
-		return ResponseEntity.status(HttpStatus.OK).body(users);
-	}
 
-	@DeleteMapping("/users/{userId}")
-	public ResponseEntity<?> deleteUser(@PathVariable("userId") Integer userId) {
-		UserBean user = userDao.getUserById(userId);
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
-		} else {
-
-			return ResponseEntity.status(HttpStatus.OK).body(user);
-		}
-	}
 	//status 
 	//data 
 	
-	@GetMapping("/users/{userId}")
-	public UserBean getUserById(@PathVariable("userId") Integer userId) {
-		UserBean user = userDao.getUserById(userId);
-		if (user == null) {
-			return null;
-		} else {
-
-			return user;
-		}
-	}
-
-	@PutMapping("/users")
-	public UserBean updateUser(@RequestBody UserBean user) {
-		userDao.updateUser(user);
-		return user;
-	}
 
 	// db encoded
 	// user plainText

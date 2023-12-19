@@ -63,7 +63,7 @@ public class UserDao {
 			return  stmt.queryForObject("select * from users where token = ?",
 					new BeanPropertyRowMapper<>(UserBean.class), new Object[] { token });
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		return null;
 	}
