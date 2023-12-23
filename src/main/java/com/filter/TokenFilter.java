@@ -3,10 +3,9 @@ package com.filter;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.bean.UserBean;
 import com.dao.UserDao;
 
 import jakarta.servlet.Filter;
@@ -36,21 +35,39 @@ public class TokenFilter implements Filter {
 		System.out.println("url => " + url1);
 		System.out.println("urI => " + url2);
 
-		if (!url1.contains("public")) {// private
+		if (url1.contains("public")) {
+			chain.doFilter(request, response);// goahead
+		} else {
+			// private
+			// admin | user
+			// token ?
+			if (token == null || token.trim().length() == 0) {
+				System.out.println("TOKEN is MISSING");
+				return;
+			} else {
+				UserBean user = userDao.getUserByToken(token); // user NULL
+				if (user == null) {
+					System.out.println("Invalid TOKEN");
+					return;
+				} else if (user.getRole() == null) {
 
-			if (token != null || token.trim().length() != 0) {
-				// token->time , todayTime
-				if (userDao.getUserByToken(token) == null) {
-					// return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-					
-					System.out.println("UNAUTHORIZED");
-				} else {
+					System.out.println("Invalid USER ");
+					return;
+				} else {// admin
+						// url ROLE
+						// admin ADMIN
+						// admin USER
+						// user ADMIN
+						// user USER
+
+					// true && true
+					if (url1.contains("admin") && !user.getRole().equals("ADMIN")) {
+						System.out.println("UNAUTHORIZED");
+						return;
+					}
 					chain.doFilter(request, response);
 				}
 			}
-		} else {// public
-
-			chain.doFilter(request, response);
 		}
 
 	}

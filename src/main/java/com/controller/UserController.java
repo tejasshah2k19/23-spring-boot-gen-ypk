@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bean.UserBean;
 import com.dao.UserDao;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 	@Autowired
 	UserDao userDao;
@@ -37,27 +39,15 @@ public class UserController {
 		userDao.updateUser(user);
 		return user;
 	}
-
-	@GetMapping("/users")
-	public ResponseEntity<?> getAllUsers() {
-		//
-		// user is loggedin?
-
+	
+	@GetMapping("/logout")
+	public ResponseEntity<?> logout(@RequestHeader("token") String token){
 		
-
-		List<UserBean> users = userDao.getAllUsers();
-		return ResponseEntity.status(HttpStatus.OK).body(users);
-	}
-
-	@DeleteMapping("/users/{userId}")
-	public ResponseEntity<?> deleteUser(@PathVariable("userId") Integer userId) {
-		UserBean user = userDao.getUserById(userId);
-		if (user == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
-		} else {
-
-			return ResponseEntity.status(HttpStatus.OK).body(user);
-		}
+		UserBean user = userDao.getUserByToken(token);
+		
+		userDao.updateToken(user.getUserId(), "");
+		
+		return ResponseEntity.ok(null);
 	}
 
 }

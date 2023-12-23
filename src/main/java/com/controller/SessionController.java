@@ -54,6 +54,7 @@ public class SessionController {
 
 		String ePwd = encoder.encode(pwd);
 		userBean.setPassword(ePwd);
+		userBean.setRole("USER");
 
 		userDao.addUser(userBean);
 
@@ -90,6 +91,7 @@ public class SessionController {
 		
 			//token generate - 56437
 		String token = 	"" + (int)(Math.random()*100000); //    * 100000
+		//service -> TokenService 
 		
 		//user -> set 
 			user.setToken(token);
@@ -104,14 +106,6 @@ public class SessionController {
 		// 401
 	}
 	
-	@GetMapping("/logout")
-	public ResponseEntity<?> logout(@RequestHeader("token") String token){
-		
-		UserBean user = userDao.getUserByToken(token);
-		
-		userDao.updateToken(user.getUserId(), "");
-		
-		return ResponseEntity.ok(null);
-	}
+	
 
 }

@@ -5,6 +5,7 @@ public class UserBean {
 	private String firstName;
 	private String email;
 	private String password;
+	private String role; 
 	
 	private String token; 
 	
@@ -37,6 +38,13 @@ public class UserBean {
 	}
 	public void setToken(String token) {
 		this.token = token;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
 	} 
+	
 	
 }
